@@ -60,3 +60,4 @@ pub async fn handle_retire_primary() {
     .await;
     let _pv = persistent::persistent_volume_undeploy(client.clone(), "postgresql-pv-volume").await;
 }
+

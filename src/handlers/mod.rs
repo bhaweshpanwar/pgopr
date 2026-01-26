@@ -9,6 +9,7 @@
 pub mod cluster;
 pub mod generate;
 pub mod operator;
+pub mod pgmoneta;
 
 use clap::{crate_description, crate_name, crate_version};
 use log::info;

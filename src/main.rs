@@ -21,10 +21,12 @@ use crate::crd::v1::pgopr;
 pub mod crd;
 mod finalizer;
 pub mod handlers;
+pub mod pgmoneta;
 mod k8s;
 mod persistent;
 mod primary;
 mod services;
+
 
 /// Context injected with each `reconcile` and `on_error` method invocation
 pub(crate) struct ContextData {
@@ -87,6 +89,11 @@ fn cli() -> Command {
                     Command::new("primary")
                         .about("Provision a primary instance")
                         .display_order(1),
+                )
+                .subcommand(
+                    Command::new("pgmoneta")
+                        .about("Povision a pgmoneta instance")
+                        .display_order(1)
                 ),
         )
         .subcommand(
@@ -98,6 +105,11 @@ fn cli() -> Command {
                     Command::new("primary")
                         .about("Retire a primary instance")
                         .display_order(1),
+                )
+                .subcommand(
+                    Command::new("pgmoneta")
+                    .about("Retire a pgmoeta instance")
+                    .display_order(1),
                 ),
         )
         .subcommand(
@@ -127,7 +139,7 @@ fn cli() -> Command {
                         .short('t')
                         .long("type")
                         .required(true)
-                        .value_parser(vec!["crd", "service", "persistent", "primary"])
+                        .value_parser(vec!["crd", "service", "persistent", "primary","pgmoneta"])
                         .help("Generate YAML resources"),
                 ),
         )
@@ -175,6 +187,7 @@ async fn main() {
             let (name, _) = sub_matches.subcommand().unwrap_or(("primary", sub_matches));
             match name {
                 "primary" => handlers::cluster::handle_provision_primary().await,
+                "pgmoneta" => handlers::pgmoneta::handle_provision_pgmoneta().await,
                 name => unreachable!("Unsupported subcommand `{}`", name),
             }
         }
@@ -183,6 +196,7 @@ async fn main() {
             let (name, _) = sub_matches.subcommand().unwrap_or(("primary", sub_matches));
             match name {
                 "primary" => handlers::cluster::handle_retire_primary().await,
+                "pgmoneta" => handlers::pgmoneta::handle_retire_pgmoneta().await,
                 name => unreachable!("Unsupported subcommand `{}`", name),
             }
         }
